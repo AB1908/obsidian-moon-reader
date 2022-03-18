@@ -7,5 +7,5 @@ export default function integerToRGBA(
   }
   const ARGB = number.toString(16).toUpperCase();
 
-  return `#${ARGB.slice(2,)}${ARGB.slice(0,2)}`;
+  return `${ARGB.slice(2,)}${ARGB.slice(0,2)}`;
 }
