@@ -5,8 +5,6 @@ export function generateOutput(
     listOfAnnotations: Annotation[]
 ): string {
     const sample = listOfAnnotations[0];
-    console.log(sample);
-    console.log(listOfAnnotations[1]);
     const frontmatter = `---\npath: ${sample.bookPath}\ntitle: ${sample.bookName}\nauthor: \n---\n`;
     var output = frontmatter;
     for (let annotation of listOfAnnotations) {
