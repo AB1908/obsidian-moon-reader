@@ -4,16 +4,16 @@ import { generateOutput } from 'exporter';
 
 // Remember to rename these classes and interfaces!
 
-interface MyPluginSettings {
-	exportsPath: string;
+export interface PluginSettings {
+	exportsPath: string
 }
 
-const DEFAULT_SETTINGS: MyPluginSettings = {
-	exportsPath: 'default'
+const DEFAULT_SETTINGS: PluginSettings = {
+	exportsPath: 'Book Exports'
 }
 
 export default class MoonReader extends Plugin {
-	settings: MyPluginSettings;
+	settings: PluginSettings;
 
 	async onload() {
 		await this.loadSettings();
@@ -29,7 +29,12 @@ export default class MoonReader extends Plugin {
 				if (!currentTFile) {
 					new Notice("No active file!");
 				}
-				await this.app.vault.append(currentTFile, generateOutput(await parse()));
+				const parsedOutput = await parse(this.settings);
+				if (parsedOutput) {
+					await this.app.vault.append(currentTFile, generateOutput(parsedOutput));
+				} else {
+					new Notice("Nothing added!")
+				}
 			}
 		});
 		this.addSettingTab(new SettingsTab(this.app, this));
