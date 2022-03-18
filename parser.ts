@@ -1,12 +1,14 @@
 import { TFile, Notice } from 'obsidian';
 import { ExportSelecter } from 'suggester';
 import { Annotation } from 'types';
+import { PluginSettings } from 'main';
 
 export async function parse(
+    settings: PluginSettings
 ): Promise<Annotation[]> {
     try {
-        let fileChoice: TFile = null;
-        const rootPath = "Book Exports"; // TODO: change hardcoded path
+        let fileChoice: TFile | void = null;
+        const rootPath = settings.exportsPath; // TODO: change hardcoded path
         const currentTFile = this
             .app
             .workspace
@@ -16,39 +18,37 @@ export async function parse(
             new Notice("No active file!");
             return;
         }
-        const exportPathKey = "path"; // todo fix hardcoding
-        const exportPathFromFrontmatter = this
+        const exportTFolder = this
             .app
-            .metadataCache
-            .getFileCache(currentTFile)
-            .frontmatter[exportPathKey]
-            ;
-        if (!exportPathFromFrontmatter) { //todo: refactor
-            new Notice("File Metadata Missing!");
-            const exportedFiles = this
-                .app
-                .vault
-                .getAbstractFileByPath(rootPath)
-                .children
-                .filter(
-                    (t: TFile) => t.basename
-                )
-                ;
-            const suggesterModal = new ExportSelecter(this.app, exportedFiles);
-            const fileChoicePromise = new Promise(
-                (
-                    resolve: (value: TFile) => void,
-                    reject: (reason?: string) => void
-                ) => suggesterModal.openAndGetValue(resolve, reject)
-            )
-                ;
-            fileChoice = await fileChoicePromise;
-            if (typeof fileChoice === 'string') {
-                new Notice("nothing selected");
-                return;
-            }
+            .vault
+            .getAbstractFileByPath(rootPath)
+        if (!exportTFolder) {
+            new Notice("Invalid Folder Path");
+            return;
         }
-        // todo: add time checking
+        const exportedFiles = exportTFolder
+            .children
+            ?.filter(
+                (t: TFile) => t.basename && t.extension == `mrexpt`
+            )
+            ;
+        if (!exportedFiles.length) {
+            new Notice("Folder does not have any Moon+ Reader exports!");
+            return;
+        }
+        const suggesterModal = new ExportSelecter(this.app, exportedFiles);
+        const fileChoicePromise = new Promise(
+            (
+                resolve: (value: TFile) => void,
+                reject: (reason?: string) => void
+            ) => suggesterModal.openAndGetValue(resolve, reject)
+        )
+            ;
+        fileChoice = await fileChoicePromise.catch((e) => { new Notice("Prompt cancelled!") });
+        if (!fileChoice) {
+            return;
+        }
+        /// todo: add time checking
 
         let highlightContent = await this
             .app
