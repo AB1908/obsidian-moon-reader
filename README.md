@@ -43,7 +43,7 @@ Sample output:
 ```
 :::
 
-color:: #FF33AA44
+color:: FF33AA44
 
 > Down the rabbit hole
 
