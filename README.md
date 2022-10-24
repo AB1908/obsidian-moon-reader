@@ -19,35 +19,40 @@
 
 4. Use the command palette to parse an export from Moon+ Reader. The command is named "Parse an export".
 
+5. Choose the color of which annotations you want to import.
+
 Note that this is a one time processing and will keep being appended to if you rerun it. 
 Incremental processing (i.e. processing only the change) will come at a later time.
 
 ### What is currently supported?
 
 Very little to be honest.
-The export format looks like this:
+You can only import a single color's worth of highlights at the moment.
+The export format uses Obsidian callouts and looks like so:
 
 ```
-:::
-
-color:: (RGBA hex code)
-
-> This is highlighted text.
-
-This is the note for that highlight.
-
-:::
+> [!color hexcode]
+> highlight text
+> ***
+> note text
 ```
 
 Sample output:
 ```
-:::
-
-color:: FF33AA44
-
+> [!FF33AA]
 > Down the rabbit hole
-
-Here we go!
-
-:::
+> ***
+> Here we go!
 ```
+
+## To do
+
+This is by no means a guarantee of what will be implemented. There are no timelines whatsoever.
+
+- [ ] Allow importing all colors of annotations at once
+- [ ] Allow filtering by annotation types (underlines vs highlights)
+- [ ] Export templates
+- [ ] API support
+- [ ] Better export file handling (only supports a single folder for now)
+- [ ] Use frontmatter more effectively
+- [ ] Better incremental exports
