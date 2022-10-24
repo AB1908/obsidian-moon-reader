@@ -1,16 +1,16 @@
 import { App, TFile, FuzzyMatch, FuzzySuggestModal } from 'obsidian';
 
 export class ExportSelecter extends FuzzySuggestModal<TFile> {
-    suggestions: TFile[];
-    private resolve: (value: TFile) => void;
-    private reject: (reason?: string) => void;
+	suggestions: TFile[];
+	private resolve: (value: TFile) => void;
+	private reject: (reason?: string) => void;
 	submitted: boolean;
 
 	constructor(app: App, suggestions: TFile[]) {
 		super(app);
 		this.setPlaceholder("Choose your export file");
-        // TODO: better folder handling
-        this.suggestions = suggestions;
+		// TODO: better folder handling
+		this.suggestions = suggestions;
 		this.submitted = false;
 	}
 
@@ -34,16 +34,23 @@ export class ExportSelecter extends FuzzySuggestModal<TFile> {
 
 	onClose(): void {
 		if (!this.submitted) {
-			this.reject("Cancelled");
+			this.reject();
 		}
-	}	
+	}
 
-    async openAndGetValue(
-		resolve: (value: TFile) => void,
-		reject: (reason?: string) => void
-    ): Promise<void> {
-		this.resolve = resolve;
-        this.reject = reject;
-        this.open();
-    }
+	async openAndGetValue(
+	): Promise<TFile> {
+		return new Promise(
+			(resolve, reject) => {
+				try {
+					this.resolve = resolve;
+					this.reject = reject;
+					this.open();
+				}
+				catch (e) {
+					console.log(e)
+				}
+			}
+		)
+	}
 }

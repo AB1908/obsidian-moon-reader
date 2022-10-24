@@ -1,66 +1,47 @@
 import { TFile, Notice } from 'obsidian';
-import { ExportSelecter } from 'suggester';
 import { Annotation } from 'types';
-import { PluginSettings } from 'main';
 
 export async function parse(
-    settings: PluginSettings
+    mrexptChoice: TFile
 ): Promise<Annotation[]> {
     try {
-        let fileChoice: TFile | void = null;
-        const rootPath = settings.exportsPath; // TODO: change hardcoded path
         const currentTFile = this
             .app
             .workspace
             .getActiveFile()
             ;
         if (!currentTFile) {
+            //TODO: Handle by giving file prompt?
             new Notice("No active file!");
             return;
         }
-        const exportTFolder = this
+        const exportPathKey = "path"; // todo fix hardcoding
+        var bookPathFromFrontMatter: string;
+        const parsedFileFrontmatter = this
             .app
-            .vault
-            .getAbstractFileByPath(rootPath)
-        if (!exportTFolder) {
-            new Notice("Invalid Folder Path");
-            return;
-        }
-        const exportedFiles = exportTFolder
-            .children
-            ?.filter(
-                (t: TFile) => t.basename && t.extension == `mrexpt`
-            )
+            .metadataCache
+            .getFileCache(currentTFile)
+            ?.frontmatter
             ;
-        if (!exportedFiles.length) {
-            new Notice("Folder does not have any Moon+ Reader exports!");
-            return;
-        }
-        const suggesterModal = new ExportSelecter(this.app, exportedFiles);
-        const fileChoicePromise = new Promise(
-            (
-                resolve: (value: TFile) => void,
-                reject: (reason?: string) => void
-            ) => suggesterModal.openAndGetValue(resolve, reject)
-        )
-            ;
-        fileChoice = await fileChoicePromise.catch((e) => { new Notice("Prompt cancelled!") });
-        if (!fileChoice) {
-            return;
+        if (!parsedFileFrontmatter) { //todo: refactor
+            //TODO: Raise exception
+            new Notice("File Metadata Missing!");
+        } else if (parsedFileFrontmatter.hasOwnProperty(exportPathKey)) {
+            bookPathFromFrontMatter = parsedFileFrontmatter[exportPathKey];
         }
         /// todo: add time checking
 
         let highlightContent = await this
             .app
             .vault
-            .read(fileChoice)
+            .read(mrexptChoice)
             ;
         let listOfAnnotations: Annotation[] = [];
         let regexpHighlight = /\#\n(?<id>.*)\n(?<title>.*)\n(?<path>.*)\n(?<lpath>.*)\n(?<chapter>.*)\n(?<p1>.*)\n(?<location>.*)\n(?<characters>.*)\n(?<color>.*)\n(?<timestamp>.*)\n(?<bookmarkText>.*)\n(?<noteText>.*)\n(?<highlightText>.*)\n(?<t1>.*)\n(?<t2>.*)\n(?<t3>.*)\n/g;
         let currentHighlight = regexpHighlight.exec(highlightContent);
         do {
             // todo: move to constructor?
-            var annotation = new Annotation();
+            let annotation = new Annotation();
             const extractedRegexMatch = currentHighlight.groups;
             annotation.sectionNumber = Number(extractedRegexMatch.chapter);
             annotation.location = extractedRegexMatch.location;
@@ -79,7 +60,6 @@ export async function parse(
             listOfAnnotations.push(annotation);
             currentHighlight = regexpHighlight.exec(highlightContent)
         } while (currentHighlight !== null);
-
         return listOfAnnotations;
     }
     catch (e) {
