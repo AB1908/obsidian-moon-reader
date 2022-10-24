@@ -1,83 +1,86 @@
-import { App, Editor, MarkdownView, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { Notice, Plugin, TFolder, TFile, TAbstractFile } from 'obsidian';
+import { ExportSelecter } from 'suggester';
 import { parse } from "parser";
 import { generateOutput } from 'exporter';
+import { SettingsTab } from './settings';
+import { ColorPicker } from 'colorpicker';
 
-// Remember to rename these classes and interfaces!
-
-export interface PluginSettings {
+export interface MoonReaderSettings {
 	exportsPath: string
 }
 
-const DEFAULT_SETTINGS: PluginSettings = {
+const MOONREADER_DEFAULT_SETTINGS: MoonReaderSettings = {
 	exportsPath: 'Book Exports'
 }
 
 export default class MoonReader extends Plugin {
-	settings: PluginSettings;
+	settings: MoonReaderSettings;
 
 	async onload() {
 		await this.loadSettings();
 
-		const ribbonIconEl = this.addRibbonIcon('book', 'Moon Reader', (evt: MouseEvent) => {
-			new Notice(`I don't know how to do the popup yet. Please use the command palette.`);
-		});
+		this.addRibbonIcon('book', 'Moon Reader', async () => await this.start());
+
 		this.addCommand({
 			id: 'parse-exports',
 			name: 'Parse an export',
-			editorCallback: async (editor: Editor, view: MarkdownView) => {
-				const currentTFile = this.app.workspace.getActiveFile();
-				if (!currentTFile) {
-					new Notice("No active file!");
-				}
-				const parsedOutput = await parse(this.settings);
-				if (parsedOutput) {
-					await this.app.vault.append(currentTFile, generateOutput(parsedOutput));
-				} else {
-					new Notice("Nothing added!")
-				}
-			}
+			editorCallback: async () =>
+				await this.start()
 		});
 		this.addSettingTab(new SettingsTab(this.app, this));
 	}
 
-	onunload() {
-
+	async start() {
+		const currentTFile = this.app.workspace.getActiveFile();
+		if (!currentTFile) {
+			new Notice("No active file!");
+		}
+		const rootPath: string = this.settings.exportsPath;
+		const exportTFolder: TAbstractFile = this
+			.app
+			.vault
+			.getAbstractFileByPath(rootPath);
+		var exportedFiles: TFile[];
+		if (exportTFolder instanceof TFolder) {
+			exportedFiles = exportTFolder
+				.children
+				?.filter(
+					(t) => (t instanceof TFile) && t.basename && t.extension == `mrexpt`
+				)
+				.map(t => t as TFile);
+		} else {
+			//sanity check
+			new Notice("Invalid Folder Path");
+			return;
+		}
+		if (!exportedFiles.length) {
+			new Notice("Folder does not have any Moon+ Reader exports!");
+			return;
+		}
+		const suggesterModal = new ExportSelecter(this.app, exportedFiles);
+		//TODO: raise error for no input?
+		const mrexptChoice = await suggesterModal.openAndGetValue().catch(e => { new Notice("Prompt cancelled"); }) as TFile;
+		if (!mrexptChoice) {
+			return;
+		}
+		const parsedOutput = await parse(mrexptChoice);
+		if (parsedOutput) {
+			const colorChoices = new Set<number>();
+			parsedOutput.forEach(t => colorChoices.add(t.signedColor))
+			const colorModal = new ColorPicker(this.app, Array.from(colorChoices));
+			const colorChoice = await colorModal.openAndGetValue()
+			// .catch(e=>console.log(e));
+			await this.app.vault.append(currentTFile, generateOutput(parsedOutput, mrexptChoice, colorChoice));
+		} else {
+			new Notice("Nothing added!");
+		}
 	}
 
 	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+		this.settings = Object.assign({}, MOONREADER_DEFAULT_SETTINGS, await this.loadData());
 	}
 
 	async saveSettings() {
 		await this.saveData(this.settings);
-	}
-}
-
-class SettingsTab extends PluginSettingTab {
-	plugin: MoonReader;
-
-	constructor(app: App, plugin: MoonReader) {
-		super(app, plugin);
-		this.plugin = plugin;
-	}
-
-	display(): void {
-		const {containerEl} = this;
-
-		containerEl.empty();
-
-		// containerEl.createEl('h2', {text: 'Settings for my awesome plugin.'});
-
-		new Setting(containerEl)
-			.setName('Book Exports Path')
-			.setDesc('This is where your mrexpt files are stored.')
-			.addText(text => text
-				.setPlaceholder('Book Exports')
-				.setValue(this.plugin.settings.exportsPath)
-				.onChange(async (value) => {
-					// console.log('Secret: ' + value);
-					this.plugin.settings.exportsPath = value;
-					await this.plugin.saveSettings();
-				}));
 	}
 }
