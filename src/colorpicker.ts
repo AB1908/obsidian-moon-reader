@@ -56,6 +56,7 @@ export class ColorPicker extends FuzzySuggestModal<number> {
 	}
 	
 	renderSuggestion(item: FuzzyMatch<number>, el: HTMLElement): void {
+		el.addClass("colorpicker");
 		const colorDiv = el.createDiv("color-box");
 		colorDiv.style.backgroundColor = `#${integerToRGBA(item.item).slice(0,6)}`;
 		const div = el.createDiv();
