@@ -4,3 +4,8 @@
     display: inline-block;
     margin: 0 10px;
 }
+
+div.colorpicker {
+    display: flex;
+    align-items: center;
+}
