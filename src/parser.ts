@@ -1,5 +1,5 @@
 import { TFile, Notice } from 'obsidian';
-import { Annotation } from 'types';
+import { Annotation } from 'src/types';
 
 export async function parse(
     mrexptChoice: TFile

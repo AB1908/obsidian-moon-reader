@@ -1,4 +1,4 @@
-import { Annotation } from 'types';
+import { Annotation } from 'src/types';
 import integerToRGBA from './util';
 import { TFile } from 'obsidian';
 

@@ -1,5 +1,5 @@
 import { App, PluginSettingTab, Setting } from 'obsidian';
-import MoonReader from './main';
+import MoonReader from 'src/main';
 
 export class SettingsTab extends PluginSettingTab {
 	plugin: MoonReader;
