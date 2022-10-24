@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-moon-reader",
-	"version": "0.2.0",
+	"version": "0.2.2",
 	"description": "Import your Moon+ Reader annotations in Obsidian.",
 	"main": "main.js",
 	"scripts": {
