@@ -1,28 +1,33 @@
-import {Annotation} from 'types';
+import { Annotation } from 'types';
 import integerToRGBA from './util';
+import { TFile } from 'obsidian';
 
-export function generateOutput(
-    listOfAnnotations: Annotation[]
-): string {
+export function generateOutput(listOfAnnotations: Annotation[], mrexptTFile: TFile, colorFilter: number): string {
     const sample = listOfAnnotations[0];
-    const frontmatter = `---\npath: ${sample.bookPath}\ntitle: ${sample.bookName}\nauthor: \n---\n`;
-    var output = frontmatter;
-    for (let annotation of listOfAnnotations) {
-        var annotationAsString: string;
+    //TODO: extract into template
+    const frontmatter = `---\npath: "${mrexptTFile.path}"\ntitle: "${sample.bookName}"\nauthor: \nlastExportedTimestamp: ${mrexptTFile.stat.mtime}\nlastExportedID: ${listOfAnnotations.last().indexCount}\n---\n`;
+    let output = frontmatter;
+
+    for (let annotation of listOfAnnotations.filter(t=>t.signedColor == colorFilter)) {
+        let annotationAsString: string;
         if (annotation.highlightText) {
-            annotationAsString = `\n:::\n\n`;
-            annotationAsString += `color:: ${integerToRGBA(annotation.signedColor)}\n\n> ${annotation.highlightText}`;
-            if (annotation.noteText) {
-                annotationAsString += `\n\n${annotation.noteText}\n\n`;
-                annotationAsString += ":::\n";
-            } else {
-                annotationAsString += `\n\n:::\n`;
-            }
+            annotationAsString = `${template(integerToRGBA(annotation.signedColor), annotation.highlightText, annotation.noteText)}\n`;
         }
-        if (annotationAsString){
+        if (annotationAsString) {
             output += annotationAsString;
         }
     }
 
     return output;
+}
+
+function template(type: any, highlight: string, note: string) {
+    if (highlight.includes("\n")) {
+        highlight = highlight.replaceAll("\n", "\n> ");
+    }
+    return `> [!${type}]
+> ${highlight}
+> ***
+> ${note}
+`;
 }
