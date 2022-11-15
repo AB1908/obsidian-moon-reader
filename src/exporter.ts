@@ -5,10 +5,19 @@ import { TFile } from 'obsidian';
 export function generateOutput(listOfAnnotations: Annotation[], mrexptTFile: TFile, colorFilter: number): string {
     const sample = listOfAnnotations[0];
     //TODO: extract into template
-    const frontmatter = `---\npath: "${mrexptTFile.path}"\ntitle: "${sample.bookName}"\nauthor: \nlastExportedTimestamp: ${mrexptTFile.stat.mtime}\nlastExportedID: ${listOfAnnotations.last().indexCount}\n---\n`;
+    // TODO: last exported ID is likely broken
+    const frontmatter = `---
+path: "${mrexptTFile.path}"
+title: "${sample.bookName}"
+author: 
+lastExportedTimestamp: ${mrexptTFile.stat.mtime}
+lastExportedID: ${listOfAnnotations.last().indexCount}
+---
+
+`;
     let output = frontmatter;
 
-    for (let annotation of listOfAnnotations.filter(t=>t.signedColor == colorFilter)) {
+    for (const annotation of listOfAnnotations.filter(t=>t.signedColor == colorFilter)) {
         let annotationAsString: string;
         if (annotation.highlightText) {
             annotationAsString = `${template(integerToRGBA(annotation.signedColor), annotation.highlightText, annotation.noteText)}\n`;
