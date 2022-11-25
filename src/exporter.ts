@@ -11,7 +11,7 @@ path: "${mrexptTFile.path}"
 title: "${sample.bookName}"
 author: 
 lastExportedTimestamp: ${mrexptTFile.stat.mtime}
-lastExportedID: ${listOfAnnotations.last().indexCount}
+lastExportedID: ${listOfAnnotations[listOfAnnotations.length-1].indexCount}
 ---
 
 `;
