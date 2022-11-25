@@ -24,7 +24,7 @@ function removeCircular(obj: any) {
 			}
 		}
 	}
-	return copy || {output: obj};
+	return copy || {obj};
 }
 
 async function writeJSON(obj: any, name?: string) {
