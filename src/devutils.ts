@@ -15,7 +15,7 @@ interface LogFile {
 
 function removeCircular(obj: any) {
 	let copy;
-	if ((typeof obj) == "object") {
+	if ((typeof obj) == "object" && !(Array.isArray(obj))) {
 		copy = Object.assign({}, obj);
 		for (const key of Object.keys(copy)) {
 			if (copy[key] instanceof TFile) {
