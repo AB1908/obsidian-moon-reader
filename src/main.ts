@@ -40,7 +40,7 @@ export default class MoonReader extends Plugin {
 			.app
 			.vault
 			.getAbstractFileByPath(rootPath);
-		var exportedFiles: TFile[];
+		let exportedFiles: TFile[];
 		if (exportTFolder instanceof TFolder) {
 			exportedFiles = exportTFolder
 				.children
