@@ -1,26 +1,27 @@
-import { Annotation } from 'src/types';
-import integerToRGBA from './util';
-import { TFile } from 'obsidian';
+import {Annotation} from 'src/types';
+import {TFile} from 'obsidian';
+import integerToRGBA from "./util";
 
-export function generateOutput(listOfAnnotations: Annotation[], mrexptTFile: TFile, colorFilter: number): string {
+export function generateOutput(listOfAnnotations: Annotation[], mrexptTFile: TFile, colorFilter: number, enableNewExporter: boolean): string {
     const sample = listOfAnnotations[0];
     //TODO: extract into template
     // TODO: last exported ID is likely broken
-    const frontmatter = `---
+	let output = `---
 path: "${mrexptTFile.path}"
 title: "${sample.bookName}"
 author: 
 lastExportedTimestamp: ${mrexptTFile.stat.mtime}
-lastExportedID: ${listOfAnnotations.last().indexCount}
+lastExportedID: ${listOfAnnotations[listOfAnnotations.length - 1].indexCount}
+tags: 
+  - "review/book"
 ---
 
 `;
-    let output = frontmatter;
 
     for (const annotation of listOfAnnotations.filter(t=>t.signedColor == colorFilter)) {
         let annotationAsString: string;
         if (annotation.highlightText) {
-            annotationAsString = `${template(integerToRGBA(annotation.signedColor), annotation.highlightText, annotation.noteText)}\n`;
+            annotationAsString = `${template(annotation, enableNewExporter)}\n`;
         }
         if (annotationAsString) {
             output += annotationAsString;
@@ -30,13 +31,31 @@ lastExportedID: ${listOfAnnotations.last().indexCount}
     return output;
 }
 
-function template(type: any, highlight: string, note: string) {
-    if (highlight.includes("\n")) {
-        highlight = highlight.replaceAll("\n", "\n> ");
-    }
-    return `> [!${type}]
+function template(annotation: Annotation, enableNewExporter: boolean) {
+	let {indexCount, highlightText: highlight, noteText: note} = annotation;
+	if (enableNewExporter) {
+		if (note.trim() === "#") {
+			return `# ${highlight.replace("\n", ": ")}\n`;
+		}
+		if (note.trim() === "##") {
+			return `## ${highlight.replace("\n", ": ")}\n`;
+		}
+		if (note.trim() === "###") {
+			return `### ${highlight.replace("\n", ": ")}\n`;
+		}
+		return `> [!notes] ${indexCount}
+${highlight.split("\n").map(t=>`> ${t}`).join("\n")}
+> ***
+${note.split("\n").map(t=>`> ${t}`).join("\n")}
+`;
+	} else {
+		if (highlight.includes("\n")) {
+			highlight = highlight.replaceAll("\n", "\n> ");
+		}
+		return `> [!${(integerToRGBA(annotation.signedColor))}]
 > ${highlight}
 > ***
 > ${note}
 `;
+	}
 }

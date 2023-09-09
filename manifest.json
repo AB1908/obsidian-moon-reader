@@ -6,5 +6,5 @@
 	"description": "This plugin will help you use your Moon+ Reader exports in Obsidian.",
 	"author": "AB1908",
 	"authorUrl": "https://github.com/AB1908",
-	"isDesktopOnly": true
+	"isDesktopOnly": false
 }

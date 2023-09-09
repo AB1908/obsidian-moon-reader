@@ -1,0 +1,104 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`exporter.generateOutput 1`] = `
+"---
+path: "Book Exports/Sönke Ahrens - How to Take Smart Notes_ One Simple Technique to Boost Writing,  Learning and Thinking-Sönke Ahrens (2022).mrexpt"
+title: "How to Take Smart Notes. One Simple Technique to Boost Writing,  Learning and Thinking"
+author: 
+lastExportedTimestamp: 1665321164166
+lastExportedID: 12623
+---
+
+> [!555555FF]
+> INTRODUCTION
+> ***
+> 
+
+> [!555555FF]
+> 1 Everything You Need to Know
+> ***
+> ##
+
+> [!555555FF]
+> 2 Everything You Need to Do
+> 
+> ***
+> ##
+
+> [!555555FF]
+> 3 Everything You Need to Have
+> ***
+> ##
+
+> [!555555FF]
+> 4 A Few Things to Keep in Mind
+> ***
+> ##
+
+> [!555555FF]
+> 5 Writing Is the Only Thing That Matters
+> ***
+> ##
+
+> [!555555FF]
+> 6 Simplicity Is Paramount
+> ***
+> ##
+
+> [!555555FF]
+> 7 Nobody Ever Starts From Scratch
+> ***
+> ##
+
+> [!555555FF]
+> 8 Let the Work Carry You Forward
+> ***
+> ##
+
+> [!555555FF]
+> 9 Separate and Interlocking Tasks
+> ***
+> ##
+
+> [!555555FF]
+> 10 Read for Understanding
+> ***
+> ##
+
+> [!555555FF]
+> 11 Take Smart Notes
+> ***
+> ##
+
+> [!555555FF]
+> 12 Develop Ideas
+> ***
+> ##
+
+> [!555555FF]
+> 13 Share Your Insight
+> ***
+> ##
+
+> [!555555FF]
+> 14 Make It a Habit
+> ***
+> ##
+
+> [!555555FF]
+> 1.1 Good Solutions are Simple – and Unexpected
+> ***
+> ###
+
+> [!555555FF]
+> 1.2 The Slip-box
+> ***
+> ###
+
+> [!555555FF]
+> 1.3 The slip-box manual
+> ***
+> ###
+
+"
+`;

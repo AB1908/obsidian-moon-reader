@@ -6,11 +6,13 @@ import { SettingsTab } from './settings';
 import { ColorPicker } from 'src/colorpicker';
 
 export interface MoonReaderSettings {
-	exportsPath: string
+	exportsPath: string;
+	enableSRSSupport: boolean;
 }
 
 const MOONREADER_DEFAULT_SETTINGS: MoonReaderSettings = {
-	exportsPath: 'Book Exports'
+	exportsPath: 'Book Exports',
+	enableSRSSupport: false
 }
 
 export default class MoonReader extends Plugin {
@@ -40,7 +42,7 @@ export default class MoonReader extends Plugin {
 			.app
 			.vault
 			.getAbstractFileByPath(rootPath);
-		var exportedFiles: TFile[];
+		let exportedFiles: TFile[];
 		if (exportTFolder instanceof TFolder) {
 			exportedFiles = exportTFolder
 				.children
@@ -70,7 +72,7 @@ export default class MoonReader extends Plugin {
 			const colorModal = new ColorPicker(this.app, Array.from(colorChoices));
 			const colorChoice = await colorModal.openAndGetValue()
 			// .catch(e=>console.log(e));
-			await this.app.vault.append(currentTFile, generateOutput(parsedOutput, mrexptChoice, colorChoice));
+			await this.app.vault.append(currentTFile, generateOutput(parsedOutput, mrexptChoice, colorChoice, this.settings.enableSRSSupport));
 		} else {
 			new Notice("Nothing added!");
 		}
