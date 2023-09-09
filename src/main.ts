@@ -6,11 +6,13 @@ import { SettingsTab } from './settings';
 import { ColorPicker } from 'src/colorpicker';
 
 export interface MoonReaderSettings {
-	exportsPath: string
+	exportsPath: string;
+	enableSRSSupport: boolean;
 }
 
 const MOONREADER_DEFAULT_SETTINGS: MoonReaderSettings = {
-	exportsPath: 'Book Exports'
+	exportsPath: 'Book Exports',
+	enableSRSSupport: false
 }
 
 export default class MoonReader extends Plugin {
