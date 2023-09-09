@@ -70,7 +70,7 @@ export default class MoonReader extends Plugin {
 			const colorModal = new ColorPicker(this.app, Array.from(colorChoices));
 			const colorChoice = await colorModal.openAndGetValue()
 			// .catch(e=>console.log(e));
-			await this.app.vault.append(currentTFile, generateOutput(parsedOutput, mrexptChoice, colorChoice));
+			await this.app.vault.append(currentTFile, generateOutput(parsedOutput, mrexptChoice, colorChoice, this.settings.enableSRSSupport));
 		} else {
 			new Notice("Nothing added!");
 		}
