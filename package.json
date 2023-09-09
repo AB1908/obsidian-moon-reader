@@ -19,6 +19,7 @@
 	"author": "AB1908",
 	"license": "MIT",
 	"devDependencies": {
+		"@gxl/epub-parser": "^2.0.4",
 		"@jest/globals": "^29.3.1",
 		"@types/node": "^16.11.6",
 		"@typescript-eslint/eslint-plugin": "^5.2.0",
