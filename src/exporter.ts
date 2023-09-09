@@ -15,12 +15,11 @@ lastExportedID: ${listOfAnnotations[listOfAnnotations.length-1].indexCount}
 ---
 
 `;
-    let output = frontmatter;
 
     for (const annotation of listOfAnnotations.filter(t=>t.signedColor == colorFilter)) {
         let annotationAsString: string;
         if (annotation.highlightText) {
-            annotationAsString = `${template(integerToRGBA(annotation.signedColor), annotation.highlightText, annotation.noteText)}\n`;
+            annotationAsString = `${template(annotation)}\n`;
         }
         if (annotationAsString) {
             output += annotationAsString;
@@ -30,13 +29,20 @@ lastExportedID: ${listOfAnnotations[listOfAnnotations.length-1].indexCount}
     return output;
 }
 
-function template(type: any, highlight: string, note: string) {
-    if (highlight.includes("\n")) {
-        highlight = highlight.replaceAll("\n", "\n> ");
-    }
-    return `> [!${type}]
-> ${highlight}
+function template(annotation: Annotation) {
+	const {indexCount, highlightText: highlight, noteText: note} = annotation;
+	if (note.trim() === "#") {
+		return `# ${highlight.replace("\n", ": ")}\n`;
+	}
+	if (note.trim() === "##") {
+		return `## ${highlight.replace("\n", ": ")}\n`;
+	}
+	if (note.trim() === "###") {
+		return `### ${highlight.replace("\n", ": ")}\n`;
+	}
+	return `> [!notes] ${indexCount}
+${highlight.split("\n").map(t=>`> ${t}`).join("\n")}
 > ***
-> ${note}
+${note.split("\n").map(t=>`> ${t}`).join("\n")}
 `;
 }
