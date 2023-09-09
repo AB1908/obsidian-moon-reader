@@ -1,17 +1,16 @@
-import { Annotation } from 'src/types';
-import integerToRGBA from './util';
-import { TFile } from 'obsidian';
+import {Annotation} from 'src/types';
+import {TFile} from 'obsidian';
 
 export function generateOutput(listOfAnnotations: Annotation[], mrexptTFile: TFile, colorFilter: number): string {
     const sample = listOfAnnotations[0];
     //TODO: extract into template
     // TODO: last exported ID is likely broken
-    const frontmatter = `---
+	let output = `---
 path: "${mrexptTFile.path}"
 title: "${sample.bookName}"
 author: 
 lastExportedTimestamp: ${mrexptTFile.stat.mtime}
-lastExportedID: ${listOfAnnotations[listOfAnnotations.length-1].indexCount}
+lastExportedID: ${listOfAnnotations[listOfAnnotations.length - 1].indexCount}
 ---
 
 `;
