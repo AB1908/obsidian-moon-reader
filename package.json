@@ -16,7 +16,7 @@
 		}
 	},
 	"keywords": [],
-	"author": "",
+	"author": "AB1908",
 	"license": "MIT",
 	"devDependencies": {
 		"@jest/globals": "^29.3.1",
