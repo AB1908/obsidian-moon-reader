@@ -12,6 +12,8 @@ title: "${sample.bookName}"
 author: 
 lastExportedTimestamp: ${mrexptTFile.stat.mtime}
 lastExportedID: ${listOfAnnotations[listOfAnnotations.length - 1].indexCount}
+tags: 
+  - "review/book"
 ---
 
 `;
